@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Xml.Linq;
 using NET_Lab2.Instruments;
@@ -40,14 +40,21 @@ namespace NET_Lab2
         public static void ShowArticlesU2014()
     {
             ShowTitle(4, "вибрати статті, що були опубліковані до 2014 року");
-            DefaultShow(Queries.GetArticlesU2014());
+            foreach (var lkp in Queries.GetArticlesU2014())
+            {
+                Console.WriteLine(lkp.Key);
+                foreach(var smth in lkp) Console.WriteLine(smth);
+            }
             Console.WriteLine('\n');
         }
         //5
         public static void ShowMagsFreqU1()
     {
             ShowTitle(5, "вибрати журнали з малою періодичністю ( менше 1 на місяць)");
-            DefaultShow(Queries.GetMagsFreqU1());
+            foreach (var dict in Queries.GetMagsFreqU1())
+            {
+                Console.WriteLine(dict.Key + " " + dict.Value);
+            }
             Console.WriteLine('\n');
         }
 
@@ -68,7 +75,7 @@ namespace NET_Lab2
             foreach (var x in Queries.GetMagsAndItsArticles())
             {
                 Console.Write($"Articles in mag {x.Key} - ");
-                foreach (var y in x.Value) Console.WriteLine(y);
+                foreach (var y in x) Console.Write(y);
             }
             Console.WriteLine('\n');
         }
@@ -81,7 +88,7 @@ namespace NET_Lab2
             foreach (var x in Queries.GetAuthorsAndItsArticles())
             {
                 Console.WriteLine(x.Key);
-                foreach (var y in x) Console.WriteLine($"\t{y}");
+                foreach (var y in x) Console.WriteLine($"\t{y.Key}");
             }
             Console.WriteLine('\n');
         }
@@ -121,7 +128,7 @@ namespace NET_Lab2
             {
                 Console.WriteLine($"Key: {x.Key}");
                 foreach (var y in x.Value)
-                    Console.WriteLine(y);
+                    Console.WriteLine((string)y);
             }
             Console.WriteLine('\n');
         }
@@ -135,31 +142,29 @@ namespace NET_Lab2
         }
 
     //13
-    /*public static void ShowConcatedLists()
+    public static void ShowConcatedLists()
     {
-        ShowTitle(13, "об'єднати два масиви авторiв");
+        ShowTitle(13, "об'єднати перший та останній член масиву");
         DefaultShow(Queries.GetConcatedLists());
-        Console.WriteLine("\n\niз виключенням дублiкатiв");
-        DefaultShow(Queries.GetDistinctedUnionList());
         Console.WriteLine('\n');
     }
 
     //14
-    public static void ShowDifferneceBetweenLists()
+    public static void ShowOrderedArticles()
     {
-        ShowTitle(14, "рiзниця множин");
-        DefaultShow(Queries.GetDifferneceBetweenLists());
+        ShowTitle(14, "відсортовані по назвах статті");
+        DefaultShow(Queries.GetOrderedArticles());
         Console.WriteLine('\n');
     }
 
 
     //15
-    public static void ShowIntersectBetweenLists()
+    public static void ShowUnpublishedAuthors()
     {
-        ShowTitle(14, "перетин множин");
-        DefaultShow(Queries.GetIntersectBetweenLists());
+        ShowTitle(14, "Автори, що не публікувались");
+        DefaultShow(Queries.GetUnpublichedAuthors());
         Console.WriteLine('\n');
-    }*/
+    }
 
     //==============================================
     private static void DefaultShow(IEnumerable<object> q)
