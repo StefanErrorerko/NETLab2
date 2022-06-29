@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -47,7 +47,7 @@ namespace NET_Lab2
             Queries.Xmlarticles = readxml.Xmlarticles;
             Queries.Xmldocs = readxml.Xmldocs;
 
-            ConsoleViewer.ShowAuthors();
+            ConsoleViewer.ShowMags();
             ConsoleViewer.ShowMagsEtEstbl();
             ConsoleViewer.ShowMagsWithNormalCirc();
             ConsoleViewer.ShowArticlesU2014();
@@ -59,9 +59,9 @@ namespace NET_Lab2
             ConsoleViewer.ShowArticlesGroupByPublish();
             ConsoleViewer.ShowArticlesGroupByYearOver2002();
             ConsoleViewer.ShowArticlesInPotopMag();
-            /*ConsoleViewer.ShowConcatedLists();
-            ConsoleViewer.ShowDifferneceBetweenLists();
-            ConsoleViewer.ShowIntersectBetweenLists();*/
+            ConsoleViewer.ShowConcatedLists();
+            ConsoleViewer.ShowOrderedArticles();
+            ConsoleViewer.ShowUnpublishedAuthors();
 
 
             // запит 14 - вивести по опублікуваннях - автор, стаття, журнал
