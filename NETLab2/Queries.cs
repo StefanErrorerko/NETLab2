@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Xml.Linq;
@@ -17,7 +17,7 @@ namespace NET_Lab2
         //1
         public static IEnumerable<string> GetMags()
         {
-            return Xmldocs.Descendants("magazine")
+            return Xmlmags.Descendants("magazine")
                 .Select(magNode => magNode.Element("name").Value);
         }
 
@@ -64,15 +64,17 @@ namespace NET_Lab2
         }
 
         //6
-        public static IEnumerable<char> GetMagFirstOfIndependentUA()
+        public static IEnumerable<string> GetMagFirstOfIndependentUA()
         {
             return (from x in Xmlmags.Descendants("magazine")
-                    select x.Element("name").Value
-                    .FirstOrDefault(a => Convert.ToDateTime(a).Year <= 1991));
+                    join y in Xmldocs.Descendants("doc")
+                        on x.Element("magid") equals y.Element("magid")
+                    where Convert.ToDateTime(x.Element("date").Value).Year > 1991
+                    select x.ToString());
         }
 
         //7
-        public static Dictionary<string, IEnumerable<XElement>> GetMagsAndItsArticles()
+        public static ILookup<string, IEnumerable<XElement>> GetMagsAndItsArticles()
         {
             var mags = Xmlmags.Descendants("magazine");
             var docs = Xmldocs.Descendants("doc");
@@ -85,7 +87,7 @@ namespace NET_Lab2
                       {
                           Mag = m.Element("name").Value,
                           Art = temp
-                      }).ToDictionary(a => a.Mag, a => a.Art);
+                      }).ToLookup(a => a.Mag, a => a.Art);
 
             return q1;
         }
@@ -120,13 +122,14 @@ namespace NET_Lab2
         }
 
         //10
-        public static IEnumerable<IGrouping<int, XElement>> GetArticlesGroupByPublish()
+        public static IEnumerable<IGrouping<int, IEnumerable<string>>> GetArticlesGroupByPublish()
         {
             return from ar in Xmlarticles.Descendants("article")
                    join d in Xmldocs.Descendants("doc")
                    on ar.Element("articleid").Value equals d.Element("articleid").Value
                    into temp
-                   group ar by temp.Count();
+                   group ar.Descendants("article").Select(x => x.ToString())
+                   by temp.Count();
         }
 
         //11
@@ -164,29 +167,30 @@ namespace NET_Lab2
         }
 
         //13
-        //public IEnumerable<Author> GetConcatedLists(List<Author> au1, List<Author> au2)
-        //{
-        //    Xmlmags.Elements("magazine").
-        //        .Concat(Xmlmags.Elements("magzine")
-        //        .LastOrDefault()).Select(bus => bus.Element("number").Value);
-        //}
+        public static IEnumerable<string> GetConcatedLists()
+        {
+            return Xmlmags.Elements("magazines").Take(1)
+                .Concat(Xmlmags.Elements("magazines")).TakeLast(1)
+                .Select(a => a.Element("magazine").Element("name").Value);
+        }
 
-        //public static IEnumerable<Author> GetDistinctedUnionList(List<Author> au1, List<Author> au2)
-        //{
-        //    return au1.Union(au2).Distinct(
-        //        new AuthorEqualityComparer());
-        //}
 
-        ////14 
-        //public static IEnumerable<Author> GetDifferneceBetweenLists(List<Author> au1, List<Author> au2)
-        //{
-        //    return au1.Except(au2, new AuthorEqualityComparer());
-        //}
+        // 14
+        public static IEnumerable<string> GetOrderedArticles()
+        {
+            return Xmlarticles.Descendants("article").Select(a => a.Element("name").Value).OrderBy(a => a);
+        }
 
-        ////15
-        //public static IEnumerable<Author> GetIntersectBetweenLists(List<Author> au1, List<Author> au2)
-        //{
-        //    return au1.Intersect(au2, new AuthorEqualityComparer());
-        //}
+        //15
+
+        public static IEnumerable<string> GetUnpublichedAuthors()
+        {
+            var q = from au in Xmlauthors.Descendants("author")
+                    join ar in Xmlarticles.Descendants("article")
+                        on au.Element("authorid").Value equals ar.Element("authorid").Value
+                    select au;
+
+            return Xmlauthors.Descendants("author").Except(q).Select(a => a.Element("name").Value + " " + a.Element("surname").Value);
+        }
     }
 }
