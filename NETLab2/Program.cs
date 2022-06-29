@@ -64,20 +64,7 @@ namespace NET_Lab2
             ConsoleViewer.ShowUnpublishedAuthors();
 
 
-            // запит 14 - вивести по опублікуваннях - автор, стаття, журнал
-            //Console.WriteLine("\n=======запит 14 - вивести по опублікуваннях - автор, стаття, журнал=======");
-            //var q14 = from doc in xmldoc4.Descendants("doc")
-            //          join ar in xmldoc3.Descendants("article")
-            //            on doc.Element("article").Value equals ar.Element("name").Value
-            //          //into temp
-            //          select new
-            //          {
-            //              Author = ar.Element("author").Value,
-            //              Article = doc.Element("article").Value,
-            //              Magazine = doc.Element("magazine").Value
-            //          };
-            //PrintQuery(q14);
-
+            
         }
     }
 }
