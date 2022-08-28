@@ -1,4 +1,4 @@
-п»їusing System;
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Xml.Linq;
@@ -15,7 +15,7 @@ namespace NET_Lab2
         public static XDocument XmlMags;
         public static XDocument XmlDocs;
 
-        //1 РїРµСЂРµРї
+        //1 переп
         public static IEnumerable<Magazine> GetMags()
         {
             return XmlMags.Descendants("magazine")
@@ -95,7 +95,7 @@ namespace NET_Lab2
             return q1;
         }
 
-        //8 РїРµСЂРµРї
+        //8 переп
         public static IDictionary<int, IGrouping<int, Article>> GetAuthorsAndItsArticles()
         {
             var q = (from articles in XmlArticles.Descendants("article")
@@ -192,7 +192,7 @@ namespace NET_Lab2
                    select article.ToArticle();
         }
 
-        //13 РїРµСЂРµРї
+        //13 переп
         public static IEnumerable<Magazine> GetConcatedLists()
         {
             return XmlMags.Elements("magazines").Take(1)
@@ -201,13 +201,13 @@ namespace NET_Lab2
         }
 
 
-        // 14 РїРµСЂРµРї
+        // 14 переп
         public static IEnumerable<Article> GetOrderedArticles()
         {
             return XmlArticles.Descendants("article").Select(a => a.ToArticle()).OrderBy(a => a);
         }
 
-        //15 РїРµСЂРµРї
+        //15 переп
 
         public static IEnumerable<Author> GetUnpublichedAuthors()
         {

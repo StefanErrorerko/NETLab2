@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Xml.Linq;
 using NET_Lab2.Instruments;
@@ -43,7 +43,11 @@ namespace NET_Lab2
         public static void ShowArticlesU2014()
     {
             ShowTitle(4, "вибрати статті, що були опубліковані до 2014 року");
-            DefaultShow(Queries.GetArticlesU2014());
+            foreach (var lkp in Queries.GetArticlesU2014())
+            {
+                Console.WriteLine(lkp.Key);
+                foreach(var smth in lkp) Console.WriteLine(smth);
+            }
             Console.WriteLine('\n');
         }
         //5
