@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using NET_Lab2.Entity;
+using NET_Lab2.Entities;
 
 namespace NET_Lab2.Instruments
 {

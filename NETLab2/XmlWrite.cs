@@ -1,6 +1,4 @@
-﻿using System;
-using System.Text;
-using NET_Lab2.Entity;
+﻿using System.Text;
 using System.Xml;
 
 namespace NET_Lab2
@@ -14,10 +12,10 @@ namespace NET_Lab2
 
         internal void CreateXml(Data data)
         {
-            using (XmlWriter writer = XmlWriter.Create("authors.xml", settings))
+            using (var writer = XmlWriter.Create("authors.xml", settings))
             {
                 writer.WriteStartElement("authors");
-                foreach (Author author in data.Authors)
+                foreach (var author in data.Authors)
                 {
                     writer.WriteStartElement("author");
                     writer.WriteElementString("authorid", author.AuthorId.ToString());
@@ -30,10 +28,10 @@ namespace NET_Lab2
                 writer.WriteEndElement();
             }
 
-            using (XmlWriter writer = XmlWriter.Create("magazines.xml", settings))
+            using (var writer = XmlWriter.Create("magazines.xml", settings))
             {
                 writer.WriteStartElement("magazines");
-                foreach (Magazine magazine in data.Mags)
+                foreach (var magazine in data.Mags)
                 {
                     writer.WriteStartElement("magazine");
                     writer.WriteElementString("magid", magazine.MagId.ToString());
@@ -46,10 +44,10 @@ namespace NET_Lab2
                 writer.WriteEndElement();
             }
 
-            using (XmlWriter writer = XmlWriter.Create("articles.xml", settings))
+            using (var writer = XmlWriter.Create("articles.xml", settings))
             {
                 writer.WriteStartElement("articles");
-                foreach (Article article in data.Articles)
+                foreach (var article in data.Articles)
                 {
                     writer.WriteStartElement("article");
                     writer.WriteElementString("articleid", article.ArticleId.ToString());
@@ -60,10 +58,10 @@ namespace NET_Lab2
                 writer.WriteEndElement();
             }
 
-            using (XmlWriter writer = XmlWriter.Create("editordocuments.xml", settings))
+            using (var writer = XmlWriter.Create("editordocuments.xml", settings))
             {
                 writer.WriteStartElement("docs");
-                foreach (EditorDoc doc in data.Docs)
+                foreach (var doc in data.Docs)
                 {
                     writer.WriteStartElement("doc");
                     writer.WriteElementString("docid", doc.DocId.ToString());

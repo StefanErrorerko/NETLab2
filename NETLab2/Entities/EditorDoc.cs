@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NET_Lab2.Entity
+namespace NET_Lab2.Entities
 {
     class EditorDoc
     {
@@ -8,6 +8,7 @@ namespace NET_Lab2.Entity
         public int ArticleId { get; set; }
         public int MagId { get; set; }
         public DateTime Date { get; set; }
-        public override string ToString() => string.Format($"{Date}: Article #{ArticleId} in Mag #{MagId}");
+        public override string ToString() => string.Format($"{Date.ToString("d")}: " +
+            $"Article #{ArticleId} in Mag #{MagId}");
     }
 }

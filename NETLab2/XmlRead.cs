@@ -1,57 +1,52 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Xml.Linq;
-using NET_Lab2.Entity;
-using NET_Lab2.Instruments;
+﻿using System.Xml.Linq;
 
 namespace NET_Lab2
 {
     internal class XmlRead
     {
-        internal readonly XDocument Xmlauthors;
-        internal readonly XDocument Xmlarticles;
-        internal readonly XDocument Xmlmags;
-        internal readonly XDocument Xmldocs;
+        internal readonly XDocument XmlAuthors;
+        internal readonly XDocument XmlArticles;
+        internal readonly XDocument XmlMags;
+        internal readonly XDocument XmlDocs;
 
         internal XmlRead()
         {
-            Xmlauthors = XDocument.Load("authors.xml");
-            foreach (XElement userElement in Xmlauthors.Element("authors").Elements("author"))
-            {
-                XElement authorid = userElement.Element("authorid");
-                XElement surname = userElement.Element("surname");
-                XElement name = userElement.Element("name");
-                XElement secondname = userElement.Element("secondname");
-                XElement organisation = userElement.Element("organisation");
-            }
+            XmlAuthors = XDocument.Load("authors.xml");
+            //foreach (var userElement in XmlAuthors.Element("authors").Elements("author"))
+            //{
+            //    var authorId = userElement.Element("authorid");
+            //    var surname = userElement.Element("surname");
+            //    var name = userElement.Element("name");
+            //    var secondname = userElement.Element("secondname");
+            //    var organisation = userElement.Element("organisation");
+            //}
 
-            Xmlmags = XDocument.Load("magazines.xml");
-            foreach (XElement userElement in Xmlmags.Element("magazines").Elements("magazine"))
-            {
-                XElement magid = userElement.Element("magid");
-                XElement name = userElement.Element("name");
-                XElement established = userElement.Element("established");
-                XElement circulation = userElement.Element("circulation");
-                XElement frequency = userElement.Element("frequency");
-            }
+            XmlMags = XDocument.Load("magazines.xml");
+            //foreach (var userElement in XmlMags.Element("magazines").Elements("magazine"))
+            //{
+            //    var magId = userElement.Element("magid");
+            //    var name = userElement.Element("name");
+            //    var established = userElement.Element("established");
+            //    var circulation = userElement.Element("circulation");
+            //    var frequency = userElement.Element("frequency");
+            //}
 
-            Xmlarticles = XDocument.Load("articles.xml");
-            foreach (XElement userElement in Xmlarticles.Element("articles").Elements("article"))
-            {
-                XElement articleid = userElement.Element("articleid");
-                XElement name = userElement.Element("name");
-                XElement author = userElement.Element("authorid");
-            }
+            XmlArticles = XDocument.Load("articles.xml");
+            //foreach (var userElement in XmlArticles.Element("articles").Elements("article"))
+            //{
+            //    var articleId = userElement.Element("articleid");
+            //    var name = userElement.Element("name");
+            //    var author = userElement.Element("authorid");
+            //}
 
-            Xmldocs = XDocument.Load("editordocuments.xml");
-            foreach (XElement userElement in Xmldocs.Element("docs").Elements("doc"))
-            {
-                XElement docid = userElement.Element("docid");
-                XElement date = userElement.Element("date");
-                XElement articleid = userElement.Element("articleid");
-                XElement magid = userElement.Element("magid");
-            }
+            XmlDocs = XDocument.Load("editordocuments.xml");
+            //foreach (var userElement in XmlDocs.Element("docs").Elements("doc"))
+            //{
+            //    var docId = userElement.Element("docid");
+            //    var date = userElement.Element("date");
+            //    var articleId = userElement.Element("articleid");
+            //    var magid = userElement.Element("magid");
+            //}
         }
     }
 }

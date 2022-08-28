@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace NET_Lab2.Entity
+﻿namespace NET_Lab2.Entities
 {
     class Article
     {

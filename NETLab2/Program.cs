@@ -5,7 +5,7 @@ using System.Xml.Linq;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
-using NET_Lab2.Entity;
+using NET_Lab2.Entities;
 using NET_Lab2.Instruments;
 
 
@@ -17,7 +17,7 @@ namespace NET_Lab2
         static void Main(string[] args)
         {
             Data data = new Data();
-            XmlWrite writexml = new XmlWrite();
+            XmlWrite writeXml = new XmlWrite();
 
             Console.OutputEncoding = Encoding.UTF8;
 
@@ -25,8 +25,8 @@ namespace NET_Lab2
             data.Mags = new List<Magazine> { };
             data.Authors = new List<Author> { };
             data.Docs = new List<EditorDoc> { };
-            data.au1 = new List<Author> { };
-            data.au2 = new List<Author> { };
+            data.Au1 = new List<Author> { };
+            data.Au2 = new List<Author> { };
 
             ConsoleViewer.data = data;
 
@@ -36,22 +36,18 @@ namespace NET_Lab2
             ConsoleViewer.DisplayCreateDoc();
             ConsoleViewer.DisplayAllCreated();
 
-            //====================================================================================================================
-            //===================================================Запис у файл=====================================================
-            //====================================================================================================================
+            writeXml.CreateXml(data);
+            XmlRead readXml = new XmlRead();
+            Queries.XmlAuthors = readXml.XmlAuthors;
+            Queries.XmlMags = readXml.XmlMags;
+            Queries.XmlArticles = readXml.XmlArticles;
+            Queries.XmlDocs = readXml.XmlDocs;
 
-            writexml.CreateXml(data);
-            XmlRead readxml = new XmlRead();
-            Queries.Xmlauthors = readxml.Xmlauthors;
-            Queries.Xmlmags = readxml.Xmlmags;
-            Queries.Xmlarticles = readxml.Xmlarticles;
-            Queries.Xmldocs = readxml.Xmldocs;
-
-            ConsoleViewer.ShowAuthors();
+            ConsoleViewer.ShowMags();
             ConsoleViewer.ShowMagsEtEstbl();
             ConsoleViewer.ShowMagsWithNormalCirc();
             ConsoleViewer.ShowArticlesU2014();
-            ConsoleViewer.ShowMagsFreqU1();
+            ConsoleViewer.ShowMagsFreqU2();
             ConsoleViewer.ShowFirstMagOfIndependentUA();
             ConsoleViewer.ShowMagsAndItsArticles();
             ConsoleViewer.ShowAuthorsAndItsArticles();
@@ -59,25 +55,9 @@ namespace NET_Lab2
             ConsoleViewer.ShowArticlesGroupByPublish();
             ConsoleViewer.ShowArticlesGroupByYearOver2002();
             ConsoleViewer.ShowArticlesInPotopMag();
-            /*ConsoleViewer.ShowConcatedLists();
-            ConsoleViewer.ShowDifferneceBetweenLists();
-            ConsoleViewer.ShowIntersectBetweenLists();*/
-
-
-            // запит 14 - вивести по опублікуваннях - автор, стаття, журнал
-            //Console.WriteLine("\n=======запит 14 - вивести по опублікуваннях - автор, стаття, журнал=======");
-            //var q14 = from doc in xmldoc4.Descendants("doc")
-            //          join ar in xmldoc3.Descendants("article")
-            //            on doc.Element("article").Value equals ar.Element("name").Value
-            //          //into temp
-            //          select new
-            //          {
-            //              Author = ar.Element("author").Value,
-            //              Article = doc.Element("article").Value,
-            //              Magazine = doc.Element("magazine").Value
-            //          };
-            //PrintQuery(q14);
-
+            //ConsoleViewer.ShowConcatedLists();
+            //ConsoleViewer.ShowOrderedArticles();
+            //ConsoleViewer.ShowUnpublishedAuthors();
         }
     }
 }

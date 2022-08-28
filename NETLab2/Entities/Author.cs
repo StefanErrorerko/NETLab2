@@ -1,4 +1,4 @@
-﻿namespace NET_Lab2.Entity
+﻿namespace NET_Lab2.Entities
 {
     class Author
     {
@@ -7,8 +7,6 @@
         public string Name { get; set; }
         public string Secondname { get; set; }
         public string Organ { get; set; }
-
-        
 
         public override string ToString() => string.Format($"{Surname} {Name} {Secondname} - {Organ}");
     }
