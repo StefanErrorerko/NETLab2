@@ -11,9 +11,6 @@ namespace NET_Lab2
         internal List<Article> Articles;
         internal List<EditorDoc> Docs;
 
-        internal List<Author> Au1;
-        internal List<Author> Au2;
-
         internal void MagWithCheck(List<Magazine> mags)
         {
             foreach (var mag in mags)

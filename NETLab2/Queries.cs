@@ -15,11 +15,15 @@ namespace NET_Lab2
         public static XDocument XmlMags;
         public static XDocument XmlDocs;
 
-        //1 переп
-        public static IEnumerable<Magazine> GetMags()
+        //1 
+        public static IEnumerable<Article> GetArticlesUnpublished()
         {
-            return XmlMags.Descendants("magazine")
-                .Select(mag => mag.ToMagazine());
+            return from articles in XmlArticles.Descendants("article")
+                   where !(
+                          (from docs in XmlDocs.Descendants("doc")
+                           select docs.Element("articleid").Value)
+                           .Contains(articles.Element("articleid").Value))
+                   select articles.ToArticle();
         }
 
         // 2 
@@ -64,13 +68,11 @@ namespace NET_Lab2
         }
 
         //6
-        public static IEnumerable<Magazine> GetMagFirstOfIndependentUA()
+        public static Magazine GetMagFirstBeforeIndependence()
         {
             return (from mags in XmlMags.Descendants("magazine")
-                    join docs in XmlDocs.Descendants("doc")
-                        on mags.Element("magid") equals docs.Element("magid")
-                    where Convert.ToDateTime(mags.Element("established").Value).Year > 1991
-                    select mags.ToMagazine());
+                    orderby Convert.ToDateTime(mags.Element("established").Value).Year
+                    select mags.ToMagazine()).FirstOrDefault(mag => (mag.Est.Year <= 1991));
         }
 
         //7
@@ -95,40 +97,21 @@ namespace NET_Lab2
             return q1;
         }
 
-        //8 переп
-        public static IDictionary<int, IGrouping<int, Article>> GetAuthorsAndItsArticles()
+        //8 
+        public static ILookup<Author, Article> GetAuthorsAndItsArticles()
         {
-            var q = (from articles in XmlArticles.Descendants("article")
-                     join authors in XmlAuthors.Descendants("author")
-                         on articles.Element("articleid") equals authors.Element("articleid")
-                     join docs in XmlDocs.Descendants("doc")
-                         on articles.Element("articleid") equals docs.Element("articleid")
-                         into temp
-                     group articles.ToArticle() by temp.Count()
-                        into g
-                     select new
-                     {
-                         v1 = g.Key,
-                         v2 = g
-                     }).ToDictionary(amount => amount.v1, author => author.v2);
-            return q;
-
-
-
-
-
-
-            //return (from authors in XmlAuthors.Descendants("author")
-            //        join articles in XmlArticles.Descendants("article")
-            //            on authors.Element("authorid").Value equals articles.Element("authorid").Value
-            //            into temp
-            //        group authors.ToAuthor() by temp.Count() into g
-            //        select new 
-            //        { 
-            //            v1 = g.Key, v2 = g 
-            //        })
-            //        .ToLookup(a => a.v1, a => a.v2);
-
+            return (from authors in XmlAuthors.Descendants("author")
+                    join articles in XmlArticles.Descendants("article") 
+                        on authors.Element("authorid").Value 
+                            equals articles.Element("authorid").Value 
+                        into temp
+                    from t in temp.DefaultIfEmpty()
+                    select new 
+                    { 
+                        Author = authors.ToAuthor(), 
+                        Article = ((t == null) ? null : t.ToArticle()) 
+                    })
+         .ToLookup(au => au.Author, au => au.Article);
         }
 
         //9
@@ -184,39 +167,66 @@ namespace NET_Lab2
                          (from doc in XmlDocs.Descendants("doc")
                           join mag in (
                              from mag2 in XmlMags.Descendants("magazine")
-                             where mag2.Name == "Potop"
+                             where mag2.Element("name").Value == "Potop"
                              select mag2)
                                  on doc.Element("magid").Value equals mag.Element("magid").Value
-                          select doc.Element("articleid").Value).Contains(article.Element("articleid").Value)
-                          )
+                          select doc.Element("articleid").Value)
+                          .Contains(article.Element("articleid").Value))
                    select article.ToArticle();
         }
 
-        //13 переп
-        public static IEnumerable<Magazine> GetConcatedLists()
+        //13 
+        public static IEnumerable<Author> GetAuthorsExceptedWriterOfUkraina()
         {
-            return XmlMags.Elements("magazines").Take(1)
-                .Concat(XmlMags.Elements("magazines")).TakeLast(1)
-                .Select(a => a.Element("magazine").ToMagazine());
+            return (from authors in XmlAuthors.Descendants("author")
+                    select authors.ToAuthor())
+                   .Except(
+                       from authors2 in XmlAuthors.Descendants("author")
+                       join article in XmlArticles.Descendants("article")
+                           on authors2.Element("authorid").Value
+                               equals article.Element("authorid").Value
+                       where article.Element("name").Value == "Ukraina"
+                       select authors2.ToAuthor(),
+                       new AuthorEqualityComparer());
         }
 
-
-        // 14 переп
-        public static IEnumerable<Article> GetOrderedArticles()
+        // 14
+        public static IEnumerable<EditorDoc> GetFirstAndLastDoc()
         {
-            return XmlArticles.Descendants("article").Select(a => a.ToArticle()).OrderBy(a => a);
+            var orderedDocs = XmlDocs.Descendants("doc")
+                .OrderBy(doc => Convert.ToDateTime(doc.Element("date").Value))
+                .Select(doc => doc.ToEditorDoc());
+
+            return orderedDocs.Take(1)
+                .Concat(orderedDocs.TakeLast(1))
+                .Select(doc => doc);
         }
 
-        //15 переп
-
-        public static IEnumerable<Author> GetUnpublichedAuthors()
+        //15 
+        public static IEnumerable<Author> GetAuthorsInPotopAndTerra()
         {
-            var q = from au in XmlAuthors.Descendants("author")
-                    join ar in XmlArticles.Descendants("article")
-                        on au.Element("authorid").Value equals ar.Element("authorid").Value
-                    select au;
+            // документаія про опублікування в журналах "Potop" i "Terra"
+            var docsNeeded =  from docs in XmlDocs.Descendants("doc")
+                             join mags in XmlMags.Descendants("magazine")
+                                on docs.Element("magid").Value
+                                    equals mags.Element("magid").Value
+                             where mags.Element("name").Value == "Potop" ||
+                                mags.Element("name").Value == "Terra"
+                             select docs;
 
-            return XmlAuthors.Descendants("author").Except(q).Select(a => a.ToAuthor());
+            // статті, що є в необхідних документах
+            var articlesNeeded = from articles in XmlArticles.Descendants("article")
+                                 join docs in docsNeeded
+                                    on articles.Element("articleid").Value
+                                        equals docs.Element("articleid").Value
+                                 select articles;
+
+            // автори необхідних статей
+            return (from authors in XmlAuthors.Descendants("author")
+                   join articles in articlesNeeded
+                       on authors.Element("authorid").Value
+                           equals articles.Element("authorid").Value
+                   select authors.ToAuthor()).Distinct(new AuthorEqualityComparer());
         }
     }
 }

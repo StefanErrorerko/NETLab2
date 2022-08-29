@@ -13,11 +13,14 @@ namespace NET_Lab2
         private static int[] _count = new int[3];
         internal static Data data { get; set; }
 
-        //1 переп
-        public static void ShowMags()
+        //1
+        public static void ShowArticlesUnpublished()
         {
-            ShowTitle(1, "вибiрка всiх журналів");
-            DefaultShow(Queries.GetMags());
+            ShowTitle(1, "Статті, що не були опубліковані");
+            foreach(var article in Queries.GetArticlesUnpublished())
+            {
+                Console.WriteLine($"{article.Name} - {data.Authors[article.AuthorId-1]}");
+            };
             Console.WriteLine('\n');
         }
         //2
@@ -43,10 +46,9 @@ namespace NET_Lab2
         public static void ShowArticlesU2014()
     {
             ShowTitle(4, "вибрати статті, що були опубліковані до 2014 року");
-            foreach (var lkp in Queries.GetArticlesU2014())
+            foreach (var article in Queries.GetArticlesU2014())
             {
-                Console.WriteLine(lkp.Key);
-                foreach(var smth in lkp) Console.WriteLine(smth);
+                Console.WriteLine($"{article.Name} - {data.Authors[article.AuthorId-1]}");
             }
             Console.WriteLine('\n');
         }
@@ -56,33 +58,32 @@ namespace NET_Lab2
             ShowTitle(5, "вибрати журнали з малою періодичністю ( менше 2 на місяць)");
             foreach (var dict in Queries.GetMagsFreqU2())
             {
-                Console.WriteLine(dict.Key + " " + dict.Value);
+                Console.WriteLine(dict.Key + ", Frequency: " + dict.Value);
             }
             Console.WriteLine('\n');
         }
 
         //6
-        public static void ShowFirstMagOfIndependentUA()
+        public static void ShowMagFirstBeforeIndependence()
     {
             ShowTitle(6, "вибрати перший журнал, що був заснований " +
                 "до проголошення незалежностi");
-            DefaultShow(Queries.GetMagFirstOfIndependentUA());
+            Console.WriteLine(Queries.GetMagFirstBeforeIndependence());
             Console.WriteLine('\n');
         }
 
         //7
         public static void ShowMagsAndItsArticles()
     {
-            ShowTitle(7, "вибрати журнал та опубліковані в ньому статті" +
-                "у ньому (Group Join)");
+            ShowTitle(7, "вибрати журнал та опубліковані в ньому статті");
             foreach (var group in Queries.GetMagsAndArticles())
             {
-                Console.Write($"Articles in mag {group.Key} - ");
+                Console.Write($"Articles in mag {group.Key.Name} - ");
                 foreach (var articles in group)
                 {
                     foreach(var article in articles)
                     {
-                        Console.WriteLine(article);
+                        Console.WriteLine(article.Name);
                     }
                         
                 }
@@ -90,14 +91,14 @@ namespace NET_Lab2
             Console.WriteLine('\n');
         }
 
-        //8 n???
+        //8 
         public static void ShowAuthorsAndItsArticles()
     {
-            ShowTitle(8, "вибрати автори та статтi, якi тi друкувались " +
-                "(Outer Join)");
+            ShowTitle(8, "вибрати автори та статтi, якi тi друкувались");
             foreach (var group in Queries.GetAuthorsAndItsArticles())
             {
-                Console.WriteLine(group);
+                Console.WriteLine(group.Key);
+                foreach (var info in group) Console.WriteLine($"\t{info}");
             }
             Console.WriteLine('\n');
         }
@@ -154,31 +155,35 @@ namespace NET_Lab2
         }
 
     //13
-    public static void ShowConcatedLists()
+    public static void ShowAuthorsExceptedWriterOfUkraina()
     {
-        ShowTitle(13, "об'єднати перший та останній член масиву");
-        DefaultShow(Queries.GetConcatedLists());
+        ShowTitle(13, "Вивести усіх авторів, окрім автора статті \"Ukarina\"");
+        DefaultShow(Queries.GetAuthorsExceptedWriterOfUkraina());
         Console.WriteLine('\n');
     }
 
     //14
-    public static void ShowOrderedArticles()
+    public static void ShowFirstAndLastDoc()
     {
-        ShowTitle(14, "відсортовані по назвах статті");
-        DefaultShow(Queries.GetOrderedArticles());
+        ShowTitle(14, "Вивести документацію про першу та останню опубліковану статтю");
+        foreach(var doc in Queries.GetFirstAndLastDoc())
+        {
+                Console.WriteLine($"{doc.Date.ToString("d")}': " +
+                    $"Released '{data.Articles[doc.ArticleId-1].Name}' " +
+                    $"in mag '{data.Mags[doc.MagId-1].Name}'");
+        }
         Console.WriteLine('\n');
     }
 
 
     //15
-    public static void ShowUnpublishedAuthors()
+    public static void ShowAuthorsInPotopAndTerra()
     {
-        ShowTitle(14, "Автори, що не публікувались");
-        DefaultShow(Queries.GetUnpublichedAuthors());
+        ShowTitle(15, "Автори, що публікувались у Potop i Terra");
+        DefaultShow(Queries.GetAuthorsInPotopAndTerra());
         Console.WriteLine('\n');
     }
 
-    //==============================================
     private static void DefaultShow(IEnumerable<object> q)
         {
             foreach (var obj in q)
@@ -191,8 +196,6 @@ namespace NET_Lab2
         {
             Console.WriteLine($"=======запит {num} - {title}=======");
         }
-
-        // Запис авторів
 
         public static void DisplayCreateAuthor()
         {
@@ -243,6 +246,13 @@ namespace NET_Lab2
                     int id = data.Mags.Count() + 1;
                     data.Mags.Add(CreateMag(magData));
                 }
+                catch(ImpossibleDateException ex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Невірний формат дати");
+                    --i;
+                    Console.ResetColor();
+                }
                 catch
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -286,13 +296,20 @@ namespace NET_Lab2
 
         public static void DisplayCreateDoc()
         {
-            //Опубліковування статей
-            Console.Write("Очікуємо публікування статей.");
-            Thread.Sleep(500);
-            Console.Write(".");
-            Thread.Sleep(500);
-            Console.WriteLine(".");
-            CreateDocs();
+            try
+            {
+                //Опубліковування статей
+                Console.Write("Очікуємо публікування статей.");
+                Thread.Sleep(500);
+                Console.Write(".");
+                Thread.Sleep(500);
+                Console.WriteLine(".");
+                CreateDocs();
+            }
+            catch(ImpossibleDateException ex)
+            {
+                Console.WriteLine(ex.Message);  
+            }
         }
 
         public static void DisplayAllCreated()
@@ -315,7 +332,7 @@ namespace NET_Lab2
             Console.WriteLine("Статті:");
             foreach (var article in data.Articles)
             {
-                Console.WriteLine($"{article.Name} - {data.Authors[article.AuthorId]}");
+                Console.WriteLine($"{article.Name} - {data.Authors[article.AuthorId-1]}");
             }
 
             Console.WriteLine("Опубліковане:");
@@ -363,6 +380,7 @@ namespace NET_Lab2
             int id = data.Mags.Count() + 1;
             string name = stingData[0];
             var est = Convert.ToDateTime(stingData[1]);
+            DateTimeAccuracyMonitor.CheckDate(est);
             int circ = Int32.Parse(stingData[2]);
             double freq = Convert.ToDouble(stingData[3]);
             var mag = new Magazine() 
@@ -379,8 +397,8 @@ namespace NET_Lab2
         {
             string[] stingData = articleData.Split(',');
             string name = stingData[0];
-            int authorid = Int32.Parse(stingData[1]) - 1;
-            if (authorid < 0 || authorid > data.Authors.Count() - 1)
+            int authorid = Int32.Parse(stingData[1]);
+            if (authorid < 1 || authorid > data.Authors.Count())
             {
                 throw new UnexpectedIdException("Id gets out of boundaries");
             }
@@ -405,13 +423,19 @@ namespace NET_Lab2
             for (int i = 0; i < _count[2]; i++)
             {
                 article = data.Articles[i];
-                publishCount = rnd.Next(0, 3);
+                publishCount = rnd.Next(0, 4);
                 for (int j = 0; j < publishCount; j++)
-                {
-                    // випадкова дата
-                    date = new DateTime(rnd.Next(1991, 2022), rnd.Next(1, 12), rnd.Next(1, 30));
+                {                       
                     // випадковий журнал
-                    mag = data.Mags[rnd.Next(0, data.Mags.Count - 1)];
+                    mag = data.Mags[rnd.Next(0, data.Mags.Count)];
+                    
+                    // випадкова дата
+                    var start = mag.Est;
+                    var range = (DateTime.Now - start).Days;
+                    date = start.AddDays(rnd.Next(range));
+
+                    DateTimeAccuracyMonitor.CheckDate(date);
+
                     int id = data.Docs.Count() + 1;
                     var doc = new EditorDoc() 
                     { 
