@@ -8,15 +8,24 @@ using NET_Lab2.Instruments;
 
 namespace NET_Lab2
 {
-    internal static class Queries
+    public class Queries
     {
-        public static XDocument XmlAuthors;
-        public static XDocument XmlArticles;
-        public static XDocument XmlMags;
-        public static XDocument XmlDocs;
+        public XDocument XmlAuthors;
+        public XDocument XmlArticles;
+        public XDocument XmlMags;
+        public XDocument XmlDocs;
+
+        public Queries(ReaderXml readXml)
+        {
+
+            XmlAuthors = readXml.XmlAuthors;
+            XmlMags = readXml.XmlMags;
+            XmlArticles = readXml.XmlArticles;
+            XmlDocs = readXml.XmlDocs;
+        }
 
         //1 
-        public static IEnumerable<Article> GetArticlesUnpublished()
+        public IEnumerable<Article> GetArticlesUnpublished()
         {
             return from articles in XmlArticles.Descendants("article")
                    where !(
@@ -27,18 +36,21 @@ namespace NET_Lab2
         }
 
         // 2 
-        public static Dictionary<string, DateTime> GetMagsNameEtEstbl()
+        public Dictionary<string, DateTime> GetMagsNameEtEstbl()
         {
-            return
-            XmlMags.Descendants("magazine").Select(mag => new
+            return XmlMags.Descendants("magazine").Select(mag => new
             {
                 Name = mag.Element("name").Value,
                 Established = mag.Element("established").Value
-            }).ToDictionary(mags => mags.Name, mags => Convert.ToDateTime(mags.Established));
+            }).ToDictionary
+            (
+                mags => mags.Name, 
+                mags => Convert.ToDateTime(mags.Established)
+            );
         }
 
         //3
-        public static IEnumerable<Magazine> GetMagsWithLowCirc()
+        public IEnumerable<Magazine> GetMagsWithLowCirc()
         {
             return XmlMags.Descendants("magazine")
                 .Where(mag => Int32.Parse(mag.Element("circulation").Value) < 5000)
@@ -46,17 +58,19 @@ namespace NET_Lab2
         }
 
         //4 
-        public static IEnumerable<Article> GetArticlesU2014()
+        public IEnumerable<Article> GetArticlesU2014()
         {
             return from articles in XmlArticles.Descendants("article")
                    join docs in XmlDocs.Descendants("doc") 
-                       on articles.Element("articleid").Value equals docs.Element("articleid").Value
-                   where Convert.ToDateTime(docs.Element("date").Value).Year < 2014
+                       on articles.Element("articleid").Value 
+                        equals docs.Element("articleid").Value
+                   where 
+                        Convert.ToDateTime(docs.Element("date").Value).Year < 2014
                    select articles.ToArticle();
         }
 
         //5
-        public static Dictionary<string, double> GetMagsFreqU2()
+        public Dictionary<string, double> GetMagsFreqU2()
         {
             return (from mags in XmlMags.Descendants("magazine")
                     where Convert.ToDouble(mags.Element("frequency").Value) < 2
@@ -64,19 +78,25 @@ namespace NET_Lab2
                     {
                         Name = mags.ToMagazine().Name,
                         Frequency = mags.Element("frequency").Value
-                    }).ToDictionary(a => a.Name, a => Convert.ToDouble(a.Frequency));
+                    }).ToDictionary
+                    (
+                        a => a.Name, 
+                        a => Convert.ToDouble(a.Frequency)
+                    );
         }
 
         //6
-        public static Magazine GetMagFirstBeforeIndependence()
+        public Magazine GetMagFirstBeforeIndependence()
         {
             return (from mags in XmlMags.Descendants("magazine")
-                    orderby Convert.ToDateTime(mags.Element("established").Value).Year
-                    select mags.ToMagazine()).FirstOrDefault(mag => (mag.Est.Year <= 1991));
+                    orderby 
+                        Convert.ToDateTime(mags.Element("established").Value).Year
+                    select mags.ToMagazine())
+                        .FirstOrDefault(mag => (mag.Est.Year <= 1991));
         }
 
         //7
-        public static ILookup<Magazine, IEnumerable<Article>> GetMagsAndArticles()
+        public ILookup<Magazine, IEnumerable<Article>> GetMagsAndArticles()
         {
             var mags = XmlMags.Descendants("magazine");
             var docs = XmlDocs.Descendants("doc");
@@ -84,9 +104,11 @@ namespace NET_Lab2
 
             var q1 = (from m in mags
                       join d in docs
-                        on m.Element("magid").Value equals d.Element("magid").Value
+                        on m.Element("magid").Value 
+                            equals d.Element("magid").Value
                       join ar in art
-                        on d.Element("articleid").Value equals ar.Element("articleid").Value
+                        on d.Element("articleid").Value 
+                            equals ar.Element("articleid").Value
                         into temp
                       select new
                       {
@@ -98,7 +120,7 @@ namespace NET_Lab2
         }
 
         //8 
-        public static ILookup<Author, Article> GetAuthorsAndItsArticles()
+        public Dictionary<string, Article> GetAuthorsAndItsArticles()
         {
             return (from authors in XmlAuthors.Descendants("author")
                     join articles in XmlArticles.Descendants("article") 
@@ -108,14 +130,14 @@ namespace NET_Lab2
                     from t in temp.DefaultIfEmpty()
                     select new 
                     { 
-                        Author = authors.ToAuthor(), 
+                        Author = authors.ToAuthor().ToString(), 
                         Article = ((t == null) ? null : t.ToArticle()) 
                     })
-         .ToLookup(au => au.Author, au => au.Article);
+         .ToDictionary(au => au.Author, au => au.Article);
         }
 
         //9
-        public static Dictionary<Magazine, double> GetMagsAndCirc()
+        public Dictionary<Magazine, double> GetMagsAndCirc()
         {
             return (XmlMags.Descendants("magazine").Select(mag => new {
                 Mag = mag.ToMagazine(),
@@ -125,58 +147,59 @@ namespace NET_Lab2
             })).ToDictionary(mags => mags.Mag, mags => mags.Amount);
         }
 
-        public static double GetCircSummary()
+        public double GetCircSummary()
         {
             return GetMagsAndCirc().Sum(mag => mag.Value);
         }
 
         //10
-        public static IEnumerable<IGrouping<int, Article>> GetArticlesGroupByPublish()
+        public IEnumerable<IGrouping<int, Article>> GetArticlesGroupByPublish()
         {
             return from article in XmlArticles.Descendants("article")
                    join doc in XmlDocs.Descendants("doc")
-                       on article.Element("articleid").Value equals doc.Element("articleid").Value
+                       on article.Element("articleid").Value 
+                        equals doc.Element("articleid").Value
                        into temp
-                   group article.ToArticle() by temp.Count();
+                   group article.ToArticle() by temp.Count()
+                    into g
+                   select g;
         }
 
         //11
-        public static Dictionary<int, IGrouping<int, EditorDoc>> GetArticlesGroupByYearOver2002()
+        public Dictionary<int, IEnumerable<EditorDoc>> GetArticlesGroupByYearOver2002()
         {
             return (from article in XmlArticles.Descendants("article")
                     join doc in XmlDocs.Descendants("doc")
-                        on article.Element("articleid").Value equals doc.Element("articleid").Value
+                        on article.Element("articleid").Value 
+                            equals doc.Element("articleid").Value
                     orderby Convert.ToDateTime(doc.Element("date").Value).Year
-                    group doc.ToEditorDoc() by Convert.ToDateTime(doc.Element("date").Value).Year
+                    group doc.ToEditorDoc() 
+                        by Convert.ToDateTime(doc.Element("date").Value).Year
                         into g
                     where g.Any(x => x.Date.Year > 2002)
-
-                    select new
-                    {
-                        Key = g.Key,
-                        Docs = g
-                    }).ToDictionary(d => d.Key, d => d.Docs);
-
+                    select g
+                    ).ToDictionary(g => g.Key, g => g.Select(doc => doc));
         }
 
         //12
-        public static IEnumerable<Article> GetArticlesInPotopMag()
+        public IEnumerable<Article> GetArticlesInPotopMag()
         {
             return from article in XmlArticles.Descendants("article")
                    where (
                          (from doc in XmlDocs.Descendants("doc")
                           join mag in (
                              from mag2 in XmlMags.Descendants("magazine")
-                             where mag2.Element("name").Value == "Potop"
+                             where mag2.Element("name").Value.Equals("Potop")
                              select mag2)
-                                 on doc.Element("magid").Value equals mag.Element("magid").Value
+                                 on doc.Element("magid").Value 
+                                    equals mag.Element("magid").Value
                           select doc.Element("articleid").Value)
                           .Contains(article.Element("articleid").Value))
                    select article.ToArticle();
         }
 
         //13 
-        public static IEnumerable<Author> GetAuthorsExceptedWriterOfUkraina()
+        public IEnumerable<Author> GetAuthorsExceptedWriterOfUkraina()
         {
             return (from authors in XmlAuthors.Descendants("author")
                     select authors.ToAuthor())
@@ -185,13 +208,13 @@ namespace NET_Lab2
                        join article in XmlArticles.Descendants("article")
                            on authors2.Element("authorid").Value
                                equals article.Element("authorid").Value
-                       where article.Element("name").Value == "Ukraina"
+                       where article.Element("name").Value.Equals("Ukraina")
                        select authors2.ToAuthor(),
                        new AuthorEqualityComparer());
         }
 
         // 14
-        public static IEnumerable<EditorDoc> GetFirstAndLastDoc()
+        public IEnumerable<EditorDoc> GetFirstAndLastDoc()
         {
             var orderedDocs = XmlDocs.Descendants("doc")
                 .OrderBy(doc => Convert.ToDateTime(doc.Element("date").Value))
@@ -203,30 +226,48 @@ namespace NET_Lab2
         }
 
         //15 
-        public static IEnumerable<Author> GetAuthorsInPotopAndTerra()
+        public IEnumerable<Author> GetAuthorsInPotopAndTerra()
         {
             // документаія про опублікування в журналах "Potop" i "Terra"
-            var docsNeeded =  from docs in XmlDocs.Descendants("doc")
-                             join mags in XmlMags.Descendants("magazine")
-                                on docs.Element("magid").Value
-                                    equals mags.Element("magid").Value
-                             where mags.Element("name").Value == "Potop" ||
-                                mags.Element("name").Value == "Terra"
-                             select docs;
+            var docsNeeded = DocsAboutPotopAndTerra();
 
             // статті, що є в необхідних документах
-            var articlesNeeded = from articles in XmlArticles.Descendants("article")
-                                 join docs in docsNeeded
-                                    on articles.Element("articleid").Value
-                                        equals docs.Element("articleid").Value
-                                 select articles;
+            var articlesNeeded = ArticlesInPotopAndTerra(docsNeeded);
 
             // автори необхідних статей
+            return AuthorsInPotopAndTerra(articlesNeeded);
+        }
+
+        private IEnumerable<XElement> DocsAboutPotopAndTerra()
+        {
+            return from docs in XmlDocs.Descendants("doc")
+                   join mags in XmlMags.Descendants("magazine")
+                      on docs.Element("magid").Value
+                          equals mags.Element("magid").Value
+                   where mags.Element("name").Value == "Potop" ||
+                      mags.Element("name").Value == "Terra"
+                   select docs;
+            // ШО РОБИТИ
+        }
+
+        private IEnumerable<XElement> ArticlesInPotopAndTerra
+            (IEnumerable<XElement> docsNeeded)
+        {
+            return from articles in XmlArticles.Descendants("article")
+                   join docs in docsNeeded
+                      on articles.Element("articleid").Value
+                          equals docs.Element("articleid").Value
+                   select articles;
+        }
+
+        private IEnumerable<Author> AuthorsInPotopAndTerra
+            (IEnumerable<XElement> articlesNeeded)
+        {
             return (from authors in XmlAuthors.Descendants("author")
-                   join articles in articlesNeeded
-                       on authors.Element("authorid").Value
-                           equals articles.Element("authorid").Value
-                   select authors.ToAuthor()).Distinct(new AuthorEqualityComparer());
+             join articles in articlesNeeded
+                 on authors.Element("authorid").Value
+                     equals articles.Element("authorid").Value
+             select authors.ToAuthor()).Distinct();
         }
     }
 }

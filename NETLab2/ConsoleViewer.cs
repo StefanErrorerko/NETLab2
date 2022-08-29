@@ -8,26 +8,27 @@ using System.Collections.Generic;
 
 namespace NET_Lab2
 {
-    internal static class ConsoleViewer
+    public class ConsoleViewer
     {
-        private static int[] _count = new int[3];
-        internal static Data data { get; set; }
+        private int[] _count = new int[3];
+        public Data data { get; set; }
+        public Queries QueriesContainer { get; set; }
 
         //1
-        public static void ShowArticlesUnpublished()
+        public void ShowArticlesUnpublished()
         {
             ShowTitle(1, "Статті, що не були опубліковані");
-            foreach(var article in Queries.GetArticlesUnpublished())
+            foreach(var article in QueriesContainer.GetArticlesUnpublished())
             {
                 Console.WriteLine($"{article.Name} - {data.Authors[article.AuthorId-1]}");
             };
             Console.WriteLine('\n');
         }
         //2
-        public static void ShowMagsEtEstbl()
+        public void ShowMagsEtEstbl()
         {
             ShowTitle(2, "вибiрка журналів та років їх заснування");
-            foreach (var info in Queries.GetMagsNameEtEstbl())
+            foreach (var info in QueriesContainer.GetMagsNameEtEstbl())
             {
                 Console.WriteLine(info);
             }
@@ -35,28 +36,31 @@ namespace NET_Lab2
 
         }
         //3
-        public static void ShowMagsWithNormalCirc()
+        public void ShowMagsWithNormalCirc()
         { 
             ShowTitle(3, "Журнали з малим тиражем(<5000)");
-            DefaultShow(Queries.GetMagsWithLowCirc());
+            foreach(var mag in QueriesContainer.GetMagsWithLowCirc())
+            {
+                Console.WriteLine(mag);
+            };
             Console.WriteLine('\n');
 
         }
         //4
-        public static void ShowArticlesU2014()
+        public void ShowArticlesU2014()
     {
             ShowTitle(4, "вибрати статті, що були опубліковані до 2014 року");
-            foreach (var article in Queries.GetArticlesU2014())
+            foreach (var article in QueriesContainer.GetArticlesU2014())
             {
                 Console.WriteLine($"{article.Name} - {data.Authors[article.AuthorId-1]}");
             }
             Console.WriteLine('\n');
         }
         //5
-        public static void ShowMagsFreqU2()
+        public void ShowMagsFreqU2()
     {
             ShowTitle(5, "вибрати журнали з малою періодичністю ( менше 2 на місяць)");
-            foreach (var dict in Queries.GetMagsFreqU2())
+            foreach (var dict in QueriesContainer.GetMagsFreqU2())
             {
                 Console.WriteLine(dict.Key + ", Frequency: " + dict.Value);
             }
@@ -64,19 +68,19 @@ namespace NET_Lab2
         }
 
         //6
-        public static void ShowMagFirstBeforeIndependence()
+        public void ShowMagFirstBeforeIndependence()
     {
             ShowTitle(6, "вибрати перший журнал, що був заснований " +
                 "до проголошення незалежностi");
-            Console.WriteLine(Queries.GetMagFirstBeforeIndependence());
+            Console.WriteLine(QueriesContainer.GetMagFirstBeforeIndependence());
             Console.WriteLine('\n');
         }
 
         //7
-        public static void ShowMagsAndItsArticles()
+        public void ShowMagsAndItsArticles()
     {
             ShowTitle(7, "вибрати журнал та опубліковані в ньому статті");
-            foreach (var group in Queries.GetMagsAndArticles())
+            foreach (var group in QueriesContainer.GetMagsAndArticles())
             {
                 Console.Write($"Articles in mag {group.Key.Name} - ");
                 foreach (var articles in group)
@@ -92,35 +96,35 @@ namespace NET_Lab2
         }
 
         //8 
-        public static void ShowAuthorsAndItsArticles()
+        public void ShowAuthorsAndItsArticles()
     {
             ShowTitle(8, "вибрати автори та статтi, якi тi друкувались");
-            foreach (var group in Queries.GetAuthorsAndItsArticles())
+            foreach (var group in QueriesContainer.GetAuthorsAndItsArticles())
             {
                 Console.WriteLine(group.Key);
-                foreach (var info in group) Console.WriteLine($"\t{info}");
+                Console.WriteLine($"\t{group}");
             }
             Console.WriteLine('\n');
         }
 
         //9
-        public static void ShowCircSummary()
+        public void ShowCircSummary()
     {
 
             ShowTitle(9, " оцiнити сумарний наклад усiх журналiв на рiк");
-            foreach (var mag in Queries.GetMagsAndCirc())
+            foreach (var mag in QueriesContainer.GetMagsAndCirc())
             {
                 Console.WriteLine($"Mag: {mag.Key} - {mag.Value}pcs/yr");
             }
-            Console.WriteLine($"Sum per yr: {Queries.GetCircSummary()}");
+            Console.WriteLine($"Sum per yr: {QueriesContainer.GetCircSummary()}");
             Console.WriteLine('\n');
         }
 
         //10
-        public static void ShowArticlesGroupByPublish()
+        public void ShowArticlesGroupByPublish()
     {
             ShowTitle(10, "згрупувати усi статтi за кiлькiстю їх публiкацiй");
-            var q = Queries.GetArticlesGroupByPublish();
+            var q = QueriesContainer.GetArticlesGroupByPublish();
             foreach (var group in q)
             {
                 Console.WriteLine(group.Key);
@@ -133,10 +137,10 @@ namespace NET_Lab2
         }
 
         //11
-        public static void ShowArticlesGroupByYearOver2002()
+        public void ShowArticlesGroupByYearOver2002()
     {
             ShowTitle(11, "згрупувати усi статтi пiсля 2002 за роком публiкацiї (Group Any)");
-            var q = Queries.GetArticlesGroupByYearOver2002();
+            var q = QueriesContainer.GetArticlesGroupByYearOver2002();
             foreach (var group in q)
             {
                 Console.WriteLine($"Key: {group.Key}");
@@ -147,26 +151,32 @@ namespace NET_Lab2
         }
 
         //12
-        public static void ShowArticlesInPotopMag()
+        public void ShowArticlesInPotopMag()
     {
             ShowTitle(12, "Вивести iнформацiю про статтi, що публiкувались у 'Potop' Mag");
-            DefaultShow(Queries.GetArticlesInPotopMag());
+            foreach(var article in QueriesContainer.GetArticlesInPotopMag())
+            {
+                Console.WriteLine(article);
+            };
             Console.WriteLine('\n');
         }
 
     //13
-    public static void ShowAuthorsExceptedWriterOfUkraina()
+    public void ShowAuthorsExceptedWriterOfUkraina()
     {
         ShowTitle(13, "Вивести усіх авторів, окрім автора статті \"Ukarina\"");
-        DefaultShow(Queries.GetAuthorsExceptedWriterOfUkraina());
+        foreach(var author in QueriesContainer.GetAuthorsExceptedWriterOfUkraina())
+        {
+            Console.WriteLine(author);
+        };
         Console.WriteLine('\n');
     }
 
     //14
-    public static void ShowFirstAndLastDoc()
+    public void ShowFirstAndLastDoc()
     {
         ShowTitle(14, "Вивести документацію про першу та останню опубліковану статтю");
-        foreach(var doc in Queries.GetFirstAndLastDoc())
+        foreach(var doc in QueriesContainer.GetFirstAndLastDoc())
         {
                 Console.WriteLine($"{doc.Date.ToString("d")}': " +
                     $"Released '{data.Articles[doc.ArticleId-1].Name}' " +
@@ -177,27 +187,22 @@ namespace NET_Lab2
 
 
     //15
-    public static void ShowAuthorsInPotopAndTerra()
+    public void ShowAuthorsInPotopAndTerra()
     {
         ShowTitle(15, "Автори, що публікувались у Potop i Terra");
-        DefaultShow(Queries.GetAuthorsInPotopAndTerra());
+        foreach(var author in QueriesContainer.GetAuthorsInPotopAndTerra())
+        {
+            Console.WriteLine(author);
+        };
         Console.WriteLine('\n');
     }
 
-    private static void DefaultShow(IEnumerable<object> q)
-        {
-            foreach (var obj in q)
-            {
-                Console.WriteLine(obj);
-            }
-        }
-
-        private static void ShowTitle(int num, string title)
+        private void ShowTitle(int num, string title)
         {
             Console.WriteLine($"=======запит {num} - {title}=======");
         }
 
-        public static void DisplayCreateAuthor()
+        public void DisplayCreateAuthor()
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Скільки авторів створимо?");
@@ -226,7 +231,7 @@ namespace NET_Lab2
             Console.WriteLine("Дані вписані!");
         }
 
-        public static void DisplayCreateMagazine()
+        public void DisplayCreateMagazine()
         {
             // Запис журналів
             Console.WriteLine("Скільки створимо журналів?");
@@ -246,7 +251,7 @@ namespace NET_Lab2
                     int id = data.Mags.Count() + 1;
                     data.Mags.Add(CreateMag(magData));
                 }
-                catch(ImpossibleDateException ex)
+                catch(ImpossibleDateException)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Невірний формат дати");
@@ -265,7 +270,7 @@ namespace NET_Lab2
             Console.WriteLine("Дані вписані!");
         }
 
-        public static void DisplayCreateArticle()
+        public void DisplayCreateArticle()
         {
             // Запис статей
             Console.WriteLine("Скільки створимо статей?");
@@ -294,7 +299,7 @@ namespace NET_Lab2
             Console.WriteLine("Дані вписані!");
         }
 
-        public static void DisplayCreateDoc()
+        public void DisplayCreateDoc()
         {
             try
             {
@@ -312,7 +317,7 @@ namespace NET_Lab2
             }
         }
 
-        public static void DisplayAllCreated()
+        public void DisplayAllCreated()
         {
             Console.WriteLine("Маємо такі колекції:");
             Console.ResetColor();
@@ -344,7 +349,7 @@ namespace NET_Lab2
             }
         }
 
-        private static void ReadCount(int i)
+        private void ReadCount(int i)
         {
             bool isInputCorrect;
             do
@@ -360,7 +365,7 @@ namespace NET_Lab2
             } while (!isInputCorrect);
         }
 
-        private static Author CreateAuthor(string authorData)
+        private Author CreateAuthor(string authorData)
         {
             string[] stingData = authorData.Split(',');
             int id = data.Authors.Count() + 1;
@@ -374,7 +379,7 @@ namespace NET_Lab2
             };
             return author;
         }
-        private static Magazine CreateMag(string magData)
+        private Magazine CreateMag(string magData)
         {
             string[] stingData = magData.Split(',');
             int id = data.Mags.Count() + 1;
@@ -393,7 +398,7 @@ namespace NET_Lab2
             };
             return mag;
         }
-        private static Article CreateArticle(string articleData)
+        private Article CreateArticle(string articleData)
         {
             string[] stingData = articleData.Split(',');
             string name = stingData[0];
@@ -411,7 +416,7 @@ namespace NET_Lab2
             };
             return article;
         }
-        private static void CreateDocs()
+        private void CreateDocs()
         {
             var rnd = new Random();
             DateTime date;

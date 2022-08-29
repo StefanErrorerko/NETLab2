@@ -3,14 +3,23 @@ using System.Xml;
 
 namespace NET_Lab2
 {
-    internal class XmlWrite
+    public class WriterXml
     {
-        private readonly XmlWriterSettings settings = new XmlWriterSettings() 
-        { 
-            Indent = true, Encoding = Encoding.UTF8 
+        private readonly XmlWriterSettings settings = new XmlWriterSettings()
+        {
+            Indent = true,
+            Encoding = Encoding.UTF8
         };
 
-        internal void CreateXml(Data data)
+        public void CreateXml(Data data)
+        {
+            CreateAuthorXml(data);
+            CreateArticleXml(data);
+            CreateMagazineXml(data);
+            CreateDocXml(data);
+        }
+
+        private void CreateAuthorXml(Data data)
         {
             using (var writer = XmlWriter.Create("authors.xml", settings))
             {
@@ -27,7 +36,25 @@ namespace NET_Lab2
                 }
                 writer.WriteEndElement();
             }
-
+        }
+        private void CreateArticleXml(Data data)
+        {
+            using (var writer = XmlWriter.Create("articles.xml", settings))
+            {
+                writer.WriteStartElement("articles");
+                foreach (var article in data.Articles)
+                {
+                    writer.WriteStartElement("article");
+                    writer.WriteElementString("articleid", article.ArticleId.ToString());
+                    writer.WriteElementString("name", article.Name);
+                    writer.WriteElementString("authorid", article.AuthorId.ToString());
+                    writer.WriteEndElement();
+                }
+                writer.WriteEndElement();
+            }
+        }
+        private void CreateMagazineXml(Data data)
+        {
             using (var writer = XmlWriter.Create("magazines.xml", settings))
             {
                 writer.WriteStartElement("magazines");
@@ -43,21 +70,9 @@ namespace NET_Lab2
                 }
                 writer.WriteEndElement();
             }
-
-            using (var writer = XmlWriter.Create("articles.xml", settings))
-            {
-                writer.WriteStartElement("articles");
-                foreach (var article in data.Articles)
-                {
-                    writer.WriteStartElement("article");
-                    writer.WriteElementString("articleid", article.ArticleId.ToString());
-                    writer.WriteElementString("name", article.Name);
-                    writer.WriteElementString("authorid", article.AuthorId.ToString());
-                    writer.WriteEndElement();
-                }
-                writer.WriteEndElement();
-            }
-
+        }
+        private void CreateDocXml(Data data)
+        {
             using (var writer = XmlWriter.Create("editordocuments.xml", settings))
             {
                 writer.WriteStartElement("docs");

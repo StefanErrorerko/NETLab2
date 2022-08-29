@@ -17,44 +17,38 @@ namespace NET_Lab2
         static void Main(string[] args)
         {
             var data = new Data();
-            var writeXml = new XmlWrite();
+            var writeXml = new WriterXml();
+            var consoleViewer = new ConsoleViewer();
             Console.OutputEncoding = Encoding.UTF8;
 
-            data.Articles = new List<Article> { };
-            data.Mags = new List<Magazine> { };
-            data.Authors = new List<Author> { };
-            data.Docs = new List<EditorDoc> { };
+            consoleViewer.data = data;
 
-            ConsoleViewer.data = data;
-
-            ConsoleViewer.DisplayCreateAuthor();
-            ConsoleViewer.DisplayCreateMagazine();
-            ConsoleViewer.DisplayCreateArticle();
-            ConsoleViewer.DisplayCreateDoc();
-            ConsoleViewer.DisplayAllCreated();
+            consoleViewer.DisplayCreateAuthor();
+            consoleViewer.DisplayCreateMagazine();
+            consoleViewer.DisplayCreateArticle();
+            consoleViewer.DisplayCreateDoc();
+            consoleViewer.DisplayAllCreated();
 
             writeXml.CreateXml(data);
-            XmlRead readXml = new XmlRead();
-            Queries.XmlAuthors = readXml.XmlAuthors;
-            Queries.XmlMags = readXml.XmlMags;
-            Queries.XmlArticles = readXml.XmlArticles;
-            Queries.XmlDocs = readXml.XmlDocs;
+            ReaderXml readXml = new ReaderXml();
+            var queries = new Queries(readXml);
+            consoleViewer.QueriesContainer = queries;
 
-            ConsoleViewer.ShowArticlesUnpublished();
-            ConsoleViewer.ShowMagsEtEstbl();
-            ConsoleViewer.ShowMagsWithNormalCirc();
-            ConsoleViewer.ShowArticlesU2014();
-            ConsoleViewer.ShowMagsFreqU2();
-            ConsoleViewer.ShowMagFirstBeforeIndependence();
-            ConsoleViewer.ShowMagsAndItsArticles();
-            ConsoleViewer.ShowAuthorsAndItsArticles();
-            ConsoleViewer.ShowCircSummary();
-            ConsoleViewer.ShowArticlesGroupByPublish();
-            ConsoleViewer.ShowArticlesGroupByYearOver2002();
-            ConsoleViewer.ShowArticlesInPotopMag();
-            ConsoleViewer.ShowAuthorsExceptedWriterOfUkraina();
-            ConsoleViewer.ShowFirstAndLastDoc();
-            ConsoleViewer.ShowAuthorsInPotopAndTerra();
+            consoleViewer.ShowArticlesUnpublished();
+            consoleViewer.ShowMagsEtEstbl();
+            consoleViewer.ShowMagsWithNormalCirc();
+            consoleViewer.ShowArticlesU2014();
+            consoleViewer.ShowMagsFreqU2();
+            consoleViewer.ShowMagFirstBeforeIndependence();
+            consoleViewer.ShowMagsAndItsArticles();
+            consoleViewer.ShowAuthorsAndItsArticles();
+            consoleViewer.ShowCircSummary();
+            consoleViewer.ShowArticlesGroupByPublish();
+            consoleViewer.ShowArticlesGroupByYearOver2002();
+            consoleViewer.ShowArticlesInPotopMag();
+            consoleViewer.ShowAuthorsExceptedWriterOfUkraina();
+            consoleViewer.ShowFirstAndLastDoc();
+            consoleViewer.ShowAuthorsInPotopAndTerra();
         }
     }
 }

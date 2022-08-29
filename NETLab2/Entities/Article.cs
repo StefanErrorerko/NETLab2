@@ -1,6 +1,6 @@
 ﻿namespace NET_Lab2.Entities
 {
-    class Article
+    public class Article
     {
         public int ArticleId { get; set; }
         public string Name { get; set; }

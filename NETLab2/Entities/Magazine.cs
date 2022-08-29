@@ -2,7 +2,7 @@
 
 namespace NET_Lab2.Entities
 {
-    class Magazine
+    public class Magazine
     {
         public int MagId { get; set; }
         public string Name { get; set; }

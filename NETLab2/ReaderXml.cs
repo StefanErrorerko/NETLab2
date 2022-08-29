@@ -2,14 +2,14 @@
 
 namespace NET_Lab2
 {
-    internal class XmlRead
+    public class ReaderXml
     {
-        internal readonly XDocument XmlAuthors;
-        internal readonly XDocument XmlArticles;
-        internal readonly XDocument XmlMags;
-        internal readonly XDocument XmlDocs;
+        public readonly XDocument XmlAuthors;
+        public readonly XDocument XmlArticles;
+        public readonly XDocument XmlMags;
+        public readonly XDocument XmlDocs;
 
-        internal XmlRead()
+        public ReaderXml()
         {
             XmlAuthors = XDocument.Load("authors.xml");
             //foreach (var userElement in XmlAuthors.Element("authors").Elements("author"))

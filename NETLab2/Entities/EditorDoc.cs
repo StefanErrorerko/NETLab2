@@ -2,7 +2,7 @@
 
 namespace NET_Lab2.Entities
 {
-    class EditorDoc
+    public class EditorDoc
     {
         public int DocId { get; set; }
         public int ArticleId { get; set; }
