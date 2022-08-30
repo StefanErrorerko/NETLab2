@@ -13,7 +13,6 @@ namespace NET_Lab2.Entities
         //established
         public DateTime Est{ get; set; }
 
-        public override string ToString() => string.Format($"'{Name}' mag. " +
-            $"est.{Est.ToString("d")}, {Freq} releases per month, {Circ}p. circulation");
+        public override string ToString() => string.Format($"'{Name}' mag. est.{Est.ToString("d")}, {Freq} releases per month, {Circ}p. circulation");
     }
 }

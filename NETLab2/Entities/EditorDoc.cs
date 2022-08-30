@@ -8,7 +8,6 @@ namespace NET_Lab2.Entities
         public int ArticleId { get; set; }
         public int MagId { get; set; }
         public DateTime Date { get; set; }
-        public override string ToString() => string.Format($"{Date.ToString("d")}: " +
-            $"Article #{ArticleId} in Mag #{MagId}");
+        public override string ToString() => $"{Date.ToString("d")}: Article #{ArticleId} in Mag #{MagId}";
     }
 }

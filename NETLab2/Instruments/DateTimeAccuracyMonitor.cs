@@ -11,12 +11,5 @@ namespace NET_Lab2.Instruments
                 throw new ImpossibleDateException($"{date} is an unappropriate date");
             }
         }
-        public static void CheckDate(int year)
-        {
-            if (year >= DateTime.Now.Year || year <= 1800)
-            { 
-                throw new ImpossibleDateException($"{year} is an unappropriate date"); 
-            }
-        }
     }
 }
