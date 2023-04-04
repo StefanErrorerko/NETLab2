@@ -1,5 +1,7 @@
 # NETLab2
 
+Lab2 | 15 different queries using LINQ to XML
+
 Музика Стефан 
 ІС-02
 11-й варіант
